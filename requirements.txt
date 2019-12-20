@@ -1,0 +1,10 @@
+certifi==2019.11.28
+chardet==3.0.4
+Click==7.0
+idna==2.8
+PTable==0.9.2
+requests==2.22.0
+schedule==0.6.0
+tinydb==3.15.1
+urllib3==1.25.7
+inquirer==2.6.3
