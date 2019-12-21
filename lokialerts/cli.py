@@ -30,3 +30,7 @@ def remove_service_node():
 def show_service_nodes():
     sn_nodes = service_node_db.all()
     service_node_table.show(sn_nodes)
+
+
+@cli.command()
+def run_scheduler():
