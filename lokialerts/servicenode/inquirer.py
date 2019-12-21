@@ -7,7 +7,7 @@ def prompt_add():
         inquirer.Text(
             'port',
             message='Enter port of service node',
-            default='38157'
+            default='22023'
         ),
         inquirer.Text(
             'pubkey',

@@ -8,6 +8,8 @@ class ServiceNodeTable:
         self.field_names = [
             'ID',
             'IP',
+            'Port',
+            'Pubkey',
             'Label'
         ]
 
@@ -20,6 +22,8 @@ class ServiceNodeTable:
                 table.add_row([
                     s.doc_id,
                     s['ip'],
+                    s['port'],
+                    s['pubkey'],
                     s['label']
                 ])
             click.echo(table.get_string())
