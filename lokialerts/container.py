@@ -3,8 +3,9 @@ import os
 from tinydb import TinyDB
 from pathlib import Path
 
-from lokialerts.servicenode import ServiceNodeTable, ServiceNodeDB, inquirer
+from lokialerts.servicenode import ServiceNodeTable, ServiceNodeDB, ServiceNodeStatusJob, ServiceNodeRPC, inquirer
 from lokialerts.mailer import Mailer
+from lokialerts.scheduler import Scheduler
 
 app_path = '%s/.lokialerts' % Path.home()
 data_path = app_path + '/data.json'
@@ -20,6 +21,11 @@ mailer = Mailer(
     os.getenv('MAILER_RECIPIENTS')
 )
 
-service_node_db = ServiceNodeDB(db)
-service_node_table = ServiceNodeTable()
-service_node_inquirer = inquirer
+sn_db = ServiceNodeDB(db)
+sn_table = ServiceNodeTable()
+sn_inquirer = inquirer
+sn_rpc = ServiceNodeRPC()
+
+scheduler = Scheduler([
+    ServiceNodeStatusJob(mailer, sn_rpc, sn_db)
+])

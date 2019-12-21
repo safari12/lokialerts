@@ -20,4 +20,6 @@ class ServiceNodeStatusJob:
             if proof_age >= PROOF_AGE_WARNING:
                 self.mailer.connect()
                 self.mailer.send(
-                    'Service node %s proof age is too high, please check node' % sn['label'])
+                    'Service node %s proof age is too high, please check node' % sn['label']
+                )
+                self.mailer.disconnect()
