@@ -3,9 +3,10 @@ import os
 from tinydb import TinyDB
 from pathlib import Path
 
-from lokialerts.servicenode import ServiceNodeTable, ServiceNodeDB, ServiceNodeStatusJob, ServiceNodeRPC, inquirer
+from lokialerts.servicenode import ServiceNodeTable, ServiceNodeDB, ServiceNodeProofAgeJob, ServiceNodeVersionJob, ServiceNodeRPC, inquirer
 from lokialerts.mailer import Mailer
 from lokialerts.scheduler import Scheduler
+from lokialerts.github import LokiGithub
 
 app_path = '%s/.lokialerts' % Path.home()
 data_path = app_path + '/data.json'
@@ -14,6 +15,7 @@ if not os.path.exists(app_path):
     os.makedirs(app_path)
 db = TinyDB(data_path)
 
+loki_github = LokiGithub()
 
 mailer = Mailer(
     os.getenv('MAILER_USER'),
@@ -27,5 +29,6 @@ sn_inquirer = inquirer
 sn_rpc = ServiceNodeRPC()
 
 scheduler = Scheduler([
-    ServiceNodeStatusJob(mailer, sn_rpc, sn_db)
+    ServiceNodeProofAgeJob(mailer, sn_rpc, sn_db),
+    ServiceNodeVersionJob(mailer, sn_rpc, sn_db, loki_github)
 ])

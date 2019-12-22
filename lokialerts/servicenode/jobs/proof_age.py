@@ -2,14 +2,13 @@ import time
 import click
 
 from lokialerts.servicenode.constants import PROOF_AGE_WARNING
+from lokialerts.servicenode.jobs.base import BaseJob
 from requests.exceptions import RequestException
 
 
-class ServiceNodeStatusJob:
-    def __init__(self, mailer, rpc, db):
-        self.mailer = mailer
-        self.rpc = rpc
-        self.db = db
+class ServiceNodeProofAgeJob(BaseJob):
+    def set_schedule(self, schedule):
+        schedule.every(10).minutes.do(self.run)
 
     def run(self):
         for sn in self.db.all():

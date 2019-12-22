@@ -12,7 +12,7 @@ class Scheduler:
         click.echo('Scheduler started')
         for j in self.jobs:
             click.echo('Scheduled %s' % j.__class__.__name__)
-            schedule.every(10).seconds.do(j.run)
+            j.set_schedule(schedule)
 
         while True:
             schedule.run_pending()
