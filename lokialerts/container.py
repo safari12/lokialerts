@@ -7,6 +7,8 @@ from lokialerts.servicenode import ServiceNodeTable, ServiceNodeDB, ServiceNodeP
 from lokialerts.mailer import Mailer
 from lokialerts.scheduler import Scheduler
 from lokialerts.github import LokiGithub
+from lokialerts import recipient
+from lokialerts.recipient import RecipientTable, RecipientDB
 
 app_path = '%s/.lokialerts' % Path.home()
 data_path = app_path + '/data.json'
@@ -27,6 +29,10 @@ sn_db = ServiceNodeDB(db)
 sn_table = ServiceNodeTable()
 sn_inquirer = inquirer
 sn_rpc = ServiceNodeRPC()
+
+recipient_inquirer = recipient.inquirer
+recipient_table = RecipientTable()
+recipient_db = RecipientDB(db)
 
 scheduler = Scheduler([
     ServiceNodeProofAgeJob(mailer, sn_rpc, sn_db),
