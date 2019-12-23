@@ -8,8 +8,8 @@ from lokialerts.github import LokiGithubError
 
 
 class ServiceNodeVersionJob(BaseJob):
-    def __init__(self, mailer, rpc, db, github):
-        super().__init__(mailer, rpc, db)
+    def __init__(self, mailer, rpc, db, recipient_db, github):
+        super().__init__(mailer, rpc, db, recipient_db)
         self.github = github
 
     def schedule(self, scheduler):
@@ -29,7 +29,8 @@ class ServiceNodeVersionJob(BaseJob):
                     self.mailer.connect()
                     self.mailer.send(
                         """Service node %s version is %s and the latest version is %s, 
-                        please update node""" % (sn['label'], current_version, latest_version)
+                        please update node""" % (sn['label'], current_version, latest_version),
+                        self.recipient_db.all()
                     )
                     self.mailer.disconnect()
         except LokiGithubError:

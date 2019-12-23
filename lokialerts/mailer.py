@@ -8,10 +8,9 @@ from email.mime.text import MIMEText
 
 
 class Mailer:
-    def __init__(self, user, password, recipients):
+    def __init__(self, user, password):
         self.server = None
         self.user = user
-        self.recipients = recipients
         self.password = password
 
     def connect(self):
@@ -24,10 +23,10 @@ class Mailer:
             click.echo('Unable to connect to gmail server %s' % str(e))
             return False
 
-    def send(self, message):
+    def send(self, message, recipients):
         msg = MIMEMultipart()
         msg['From'] = self.user
-        msg['To'] = self.recipients
+        msg['To'] = ", ".join(recipients)
         msg['Subject'] = 'CryptoAlerts'
         msg.attach(MIMEText(message, 'plain'))
         self.server.send_message(msg)

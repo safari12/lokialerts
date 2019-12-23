@@ -23,7 +23,8 @@ class ServiceNodeProofAgeJob(BaseJob):
                     )
                     if self.mailer.connect():
                         self.mailer.send(
-                            'Service node %s proof age is too high, please check node' % sn['label']
+                            'Service node %s proof age is too high, please check node' % sn['label'],
+                            self.recipient_db.all()
                         )
                         self.mailer.disconnect()
             except ServiceNodeRPCError:

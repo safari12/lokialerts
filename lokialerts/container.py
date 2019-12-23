@@ -22,7 +22,6 @@ loki_github = LokiGithub()
 mailer = Mailer(
     os.getenv('MAILER_USER'),
     os.getenv('MAILER_PASSWORD'),
-    os.getenv('MAILER_RECIPIENTS')
 )
 
 sn_db = ServiceNodeDB(db)
@@ -35,6 +34,6 @@ recipient_table = RecipientTable()
 recipient_db = RecipientDB(db)
 
 scheduler = Scheduler([
-    ServiceNodeProofAgeJob(mailer, sn_rpc, sn_db),
-    ServiceNodeVersionJob(mailer, sn_rpc, sn_db, loki_github)
+    ServiceNodeProofAgeJob(mailer, sn_rpc, sn_db, recipient_db),
+    ServiceNodeVersionJob(mailer, sn_rpc, sn_db, recipient_db, loki_github)
 ])
