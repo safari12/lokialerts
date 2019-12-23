@@ -1,6 +1,7 @@
 import smtplib
 import os
 import sys
+import click
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -18,9 +19,10 @@ class Mailer:
             self.server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             self.server.login(self.user, self.password)
             self.server.ehlo()
+            return True
         except smtplib.SMTPException as e:
-            print('Unable to connect to gmail server %s' % str(e))
-            sys.exit()
+            click.echo('Unable to connect to gmail server %s' % str(e))
+            return False
 
     def send(self, message):
         msg = MIMEMultipart()
