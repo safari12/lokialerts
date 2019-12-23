@@ -13,23 +13,25 @@ class ServiceNodeVersionJob(BaseJob):
         self.github = github
 
     def schedule(self, scheduler):
-        scheduler.every().hour.do(self.run)
+        scheduler.every(15).seconds.do(self.run)
 
     def run(self):
+        click.echo("Checking version")
         try:
-            latest_version = self.github.get_latest_version()
+            latest_version_tag = self.github.get_latest_version()
+            latest_version = util.parse_version_tag(latest_version_tag)
             s_nodes = self.db.all()
             for sn in s_nodes:
                 stats = self.rpc.get_service_node_stats(sn)
-                current_version = util.parse_version(
-                    stats['service_node_version'])
-                if current_version < latest_version:
+                current_version_tag = stats['service_node_version']
+                current_version = util.parse_version(current_version_tag)
+                if current_version != 0 and current_version < latest_version:
                     click.echo("Service node is out to date")
                     click.echo("Notifying users")
                     self.mailer.connect()
                     self.mailer.send(
                         """Service node %s version is %s and the latest version is %s, 
-                        please update node""" % (sn['label'], current_version, latest_version),
+                        please update node""" % (sn['label'], util.parse_version_arr(current_version_tag), latest_version_tag),
                         self.recipient_db.all()
                     )
                     self.mailer.disconnect()

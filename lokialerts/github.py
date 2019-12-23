@@ -15,9 +15,6 @@ class LokiGithub:
                 self.base_url + '/repos/loki-project/loki-network/releases/latest'
             )
             results = response.json()
-            tag_name = results['tag_name']
-            tag_name = tag_name.replace("v", "")
-            tag_name = tag_name.replace(".", "")
-            return int(tag_name)
+            return results['tag_name']
         except requests.RequestException as e:
             raise LokiGithubError(e)

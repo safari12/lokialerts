@@ -26,7 +26,7 @@ class Mailer:
     def send(self, message, recipients):
         msg = MIMEMultipart()
         msg['From'] = self.user
-        msg['To'] = ", ".join(recipients)
+        msg['To'] = ", ".join(list(map(lambda r: r['email'], recipients)))
         msg['Subject'] = 'CryptoAlerts'
         msg.attach(MIMEText(message, 'plain'))
         self.server.send_message(msg)

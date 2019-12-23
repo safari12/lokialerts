@@ -12,11 +12,13 @@ class ServiceNodeProofAgeJob(BaseJob):
         scheduler.every(10).seconds.do(self.run)
 
     def run(self):
+        click.echo("Checking last uptime proof")
         for sn in self.db.all():
             try:
-                last_uptime_proof = self.rpc.get_service_node_stats(sn)
+                stats = self.rpc.get_service_node_stats(sn)
+                last_uptime_proof = stats['last_uptime_proof']
                 proof_age = int(time.time() - last_uptime_proof)
-                if proof_age >= PROOF_AGE_WARNING:
+                if last_uptime_proof != 0 and proof_age >= PROOF_AGE_WARNING:
                     click.echo(
                         "Service node %s has extended proof age warning, notifying users"
                         % sn['label']
