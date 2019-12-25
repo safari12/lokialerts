@@ -1,0 +1,9 @@
+version: '3'
+services:
+  scheduler:
+    build: .
+    volumes:
+      - '~/.lokialerts:/root/.lokialerts'
+    environment:
+      - MAILER_USER
+      - MAILER_PASSWOR

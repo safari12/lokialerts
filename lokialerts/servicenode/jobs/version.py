@@ -16,17 +16,22 @@ class ServiceNodeVersionJob(BaseJob):
         scheduler.every(15).seconds.do(self.run)
 
     def run(self):
-        click.echo("Checking version")
+        s_nodes = self.db.all()
+
+        if len(s_nodes) == 0:
+            click.echo("No service nodes to check version")
+            return
+
         try:
             latest_version_tag = self.github.get_latest_version()
             latest_version = util.parse_version_tag(latest_version_tag)
-            s_nodes = self.db.all()
             for sn in s_nodes:
+                click.echo("Checking version for %s" % sn['label'])
                 stats = self.rpc.get_service_node_stats(sn)
                 current_version_tag = stats['service_node_version']
                 current_version = util.parse_version(current_version_tag)
                 if current_version != 0 and current_version < latest_version:
-                    click.echo("Service node is out to date")
+                    click.echo("Service node %s is out to date" % sn['label'])
                     click.echo("Notifying users")
                     self.mailer.connect()
                     self.mailer.send(
@@ -35,6 +40,10 @@ class ServiceNodeVersionJob(BaseJob):
                         self.recipient_db.all()
                     )
                     self.mailer.disconnect()
+                else:
+                    click.echo(
+                        "Version is up to date for service node %s" % sn['label']
+                    )
         except LokiGithubError:
             click.secho(
                 'ServiceNodeVersionJob - Unable to get latest version from github', fg='red')

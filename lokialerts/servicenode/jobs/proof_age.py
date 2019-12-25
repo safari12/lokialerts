@@ -12,9 +12,14 @@ class ServiceNodeProofAgeJob(BaseJob):
         scheduler.every(10).seconds.do(self.run)
 
     def run(self):
-        click.echo("Checking last uptime proof")
-        for sn in self.db.all():
+        sn_nodes = self.db.all()
+
+        if len(sn_nodes) == 0:
+            click.echo("No service nodes to check uptime proof")
+
+        for sn in sn_nodes:
             try:
+                click.echo("Checking last uptime proof for %s" % sn['label'])
                 stats = self.rpc.get_service_node_stats(sn)
                 last_uptime_proof = stats['last_uptime_proof']
                 proof_age = int(time.time() - last_uptime_proof)
@@ -29,6 +34,10 @@ class ServiceNodeProofAgeJob(BaseJob):
                             self.recipient_db.all()
                         )
                         self.mailer.disconnect()
+                else:
+                    click.echo(
+                        "Last Uptime Proof is correct for service node %s" % sn['label']
+                    )
             except ServiceNodeRPCError:
                 click.secho(
                     'Unable to get stats from %s service node rpc' % sn['label'],
